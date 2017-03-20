@@ -1,2 +1,0 @@
-# gogama_codeigniter
-teste
