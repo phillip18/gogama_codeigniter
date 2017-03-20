@@ -1,0 +1,7 @@
+email,nome,ip,tipo,data_hora
+
+guilherme@gama.academy,Guilherme Junqueira,192.168.1.1,B2B,2017-03-16 23:23:23
+
+jessica@gama.academy,Jessica Martins,192.168.0.1,B2C,2017-03-17 12:34:15
+
+rick@gama.academy,Ricardo Drumond,127.0.0.1,B2C,2017-03-17 18:37:58

@@ -1,0 +1,109 @@
+<?php
+
+date_default_timezone_set('America/Sao_Paulo');
+
+/**
+*  Arquivo de conexão ao MySQL usando servidor local e externo
+*/
+$n = -1;
+
+// Define os servidores e configurações de cada conexão
+
+$n++;
+$MySQL[$n]['dominios']  = array('127.0.0.1', 'localhost'); // Possíveis dominios
+$MySQL[$n]['servidor']  = '127.0.0.1'; // Servidor MySQL
+$MySQL[$n]['usuario']   = 'root'; // Usuário MySQL
+$MySQL[$n]['senha']     = ''; // Senha MySQL
+$MySQL[$n]['banco']     = 'leads'; // Banco de dados
+$MySQL[$n]['persis']    = false; // Conexão persistente?
+
+$n++;
+$MySQL[$n]['dominios']  = array('66.7.202.117', 'vendaaprovada.com.br');
+$MySQL[$n]['servidor']  = 'localhost'; // Servidor MySQL
+$MySQL[$n]['usuario']   = ''; // Usuário MySQL
+$MySQL[$n]['senha']     = ''; // Senha MySQL
+$MySQL[$n]['banco']     = ''; // Banco de dados
+$MySQL[$n]['persis']    = false; // Conexão persistente?
+
+// Decide qual conexão usar
+foreach ($MySQL as $key=>$servidor) {
+    if (!isset($_SERVER['HTTP_HOST'])) {
+        $usar = $key;
+        break;
+    } else {
+        $encontrado = false;
+        foreach ($servidor['dominios'] as $dominio) {
+            if (strpos($_SERVER['HTTP_HOST'], $dominio) !== false) {
+              $usar = $key;
+              $encontrado = true;
+              break;
+            }
+        }
+        if ($encontrado)
+            break;
+    }
+}
+
+// Decide o tipo de conexão
+$MySQL['conexao'] = ($MySQL[$usar]['persis']) ? 'mysql_pconnect' : 'mysql_connect';
+
+// Conecta-se ao servidor usando o tipo de conexão definido
+$MySQL['link'] = $MySQL['conexao']($MySQL[$usar]['servidor'], $MySQL[$usar]['usuario'], $MySQL[$usar]['senha']) or die("Não foi possível se conectar ao servidor MySQL no endereço [".$MySQL[$usar]['servidor']."]");
+
+// Conecta-se ao banco de dados
+mysql_select_db($MySQL[$usar]['banco'], $MySQL['link']) or die("Não foi possível conectar-se ao banco de dados [".$MySQL[$usar]['banco']."] no servidor [".$MySQL[$usar]['servidor']."]");
+
+// Setando a conexão para caracteres UTF8
+mysql_query("SET NAMES 'utf8'");
+mysql_query('SET character_set_connection=utf8');
+mysql_query('SET character_set_client=utf8');
+mysql_query('SET character_set_results=utf8');
+
+
+// Check for empty fields
+if(empty($_POST['pname'])  		||
+   empty($_POST['unome']) 		||
+   empty($_POST['email']) 		||
+   !filter_var($_POST['email'],FILTER_VALIDATE_EMAIL))
+   {
+	echo "Nenhum campo pode estar em branco! Verifique!";
+	return false;
+   }
+	
+	//Concatena pnome e unome
+	$nome = $pnome . unome;
+	
+	//Cria o codigo_ativacao e seta a data do cadastramento
+	$ip = 'recuperar ip'
+	$data_hora = date("Y-m-d H:i:s");
+	//Monta a query de inserção na tabela
+	$sql = "INSERT INTO `leads` (`email`, `nome`, `ip`, `data_hora`)
+			 VALUES ('$email', '$nome', '$ip', '$data_hora'";
+	
+	//Grava os dados
+	$query = mysql_query($sql) OR trigger_error('ERRO: ' . mysql_error());
+	
+	if ($query == 1) {
+		$query = '<div>Cadastro efetuado com sucesso.</div>';
+	}
+	else {
+		$query = '<div>ERRO: Não foi possível efetuar o cadastro. Tente novamente.</div>';
+	}
+	
+	Mysql_close();
+	return $query;
+	
+/*$name = strip_tags(htmlspecialchars($_POST['name']));
+$email_address = strip_tags(htmlspecialchars($_POST['email']));
+$phone = strip_tags(htmlspecialchars($_POST['phone']));
+$message = strip_tags(htmlspecialchars($_POST['message']));
+	
+// Create the email and send the message
+$to = 'noreply@vendaaprovada.com'; // Add your email address inbetween the '' replacing yourname@yourdomain.com - This is where the form will send a message to.
+$email_subject = "VendaAprovada!.com:  $name";
+$email_body = "Você está recebendo essa mensagem porque se cadastrou em nosso blog.\n\n"."Suas informações de cadastro:\n\nName: $name\n\nEmail: $email_address\n\nPhone: $phone\n\nMessage:\n$message";
+$headers = "From: noreply@vendaaprovada.com\n"; // This is the email address the generated message will be from. We recommend using something like noreply@yourdomain.com.
+$headers .= "Reply-To: $email_address";	
+mail($to,$email_subject,$email_body,$headers);
+return true;*/
+?>
